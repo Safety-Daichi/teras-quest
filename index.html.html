@@ -1,0 +1,30 @@
+// WebアプリとしてHTMLを表示する
+function doGet() {
+  return HtmlService.createTemplateFromFile('index')
+    .evaluate()
+    .setTitle('TERAS RPG｜うぇるクエ')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
+}
+
+// ログをスプレッドシートに1行自動保存する
+function saveLogToSheet(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('日次ログ') || ss.insertSheet('日次ログ');
+  
+  // 初回のみ見出し行を作成
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['記録日時', 'ニックネーム', '体重(kg)', '体脂肪率(%)', 'アクション内容', '獲得EXP', '備考/音声メモ']);
+  }
+  
+  sheet.appendRow([
+    new Date(),
+    data.nickname || '',
+    data.weight || '',
+    data.bodyFat || '',
+    data.action || '',
+    data.exp || 0,
+    data.note || ''
+  ]);
+  
+  return { success: true };
+}
